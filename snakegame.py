@@ -21,15 +21,20 @@ GREEN = (0, 200, 0)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)  # màu táo lớn
 
+//Hàm này mục đích tạo ra đối tượng táo ngẫu nhiên 
 def random_apple(snake, other_apple=None):
-    while True:
+    //sử dụng while để liên tục tạo ra các tọa độ ngẫu nhiên  
+    while True: 
         x = random.randint(0, (WIDTH - CELL_SIZE) // CELL_SIZE) * CELL_SIZE
         y = random.randint(0, (HEIGHT - CELL_SIZE) // CELL_SIZE) * CELL_SIZE
+        //kiểm tra hợp lệ của tọa độ nếu tọa độ (x, y) của quả táo trùng với tọa độ của snake 
+         và quả táo khác
         if (x, y) not in snake and (other_apple is None or (x, y) != other_apple):
             return (x, y)
 
 def draw(snake, apple, score, game_state, big_apple):
     screen.fill(BLACK)
+    
     if game_state == "menu":
         text = font.render("Press any key to start", True, WHITE)
         screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2))
@@ -40,12 +45,14 @@ def draw(snake, apple, score, game_state, big_apple):
         screen.blit(retry, (WIDTH // 2 - retry.get_width() // 2, HEIGHT // 2 + 10))
     elif game_state == "playing":
         for segment in snake:
+            //draw.rect là hàm vẽ hcn 
+            //tạo ra con rắn. Định nghĩa hình chữ nhật tại vị trí (x, y) với chiều rộng và cao là CELL_SIZE 
             pygame.draw.rect(screen, GREEN, pygame.Rect(segment[0], segment[1], CELL_SIZE, CELL_SIZE))
-        pygame.draw.rect(screen, RED, pygame.Rect(apple[0], apple[1], CELL_SIZE, CELL_SIZE))
+            pygame.draw.rect(screen, RED, pygame.Rect(apple[0], apple[1], CELL_SIZE, CELL_SIZE))
         if big_apple:
             pygame.draw.rect(screen, YELLOW, pygame.Rect(big_apple[0], big_apple[1], CELL_SIZE, CELL_SIZE))
-        score_text = font.render(f"Score: {score}", True, WHITE)
-        screen.blit(score_text, (10, 10))
+    score_text = font.render(f"Score: {score}", True, WHITE)
+    screen.blit(score_text, (10, 10))
     pygame.display.flip()
 
 # Biến game
@@ -94,6 +101,7 @@ while running:
                     direction = (CELL_SIZE, 0)
 
     if game_state == "playing":
+        
         head = (snake[0][0] + direction[0], snake[0][1] + direction[1])
         snake.insert(0, head)
 
@@ -103,7 +111,7 @@ while running:
             small_apples_eaten += 1
             speed += 0.3
             apple = random_apple(snake, big_apple)
-
+            
             if small_apples_eaten >= 3:
                 big_apple = random_apple(snake, apple)
                 small_apples_eaten = 0
@@ -114,7 +122,7 @@ while running:
             big_apple = None
         else:
             snake.pop()
-
+        
         if (head[0] < 0 or head[0] >= WIDTH or head[1] < 0 or head[1] >= HEIGHT or head in snake[1:]):
             gameover_sound.play()
             game_state = "gameover"
